@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .nav-item {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .nav-item:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f3f4f6;
+        }
+
+        .nav-header {
+            background-color: #4a5568;
+            color: white;
+            padding: 1.25rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            gap: 1.25rem;
+        }
+
+        .nav-item {
+            color: #f7fafc;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            background-color: #6b7280;
+        }
+
+        .nav-item:hover {
+            background-color: #4a5568;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-item.active {
+            background-color: #3182ce;
+            color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 2.5rem;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard {
+                flex-direction: row;
+            }
+
+            .nav-menu {
+                width: 250px;
+                height: 100%;
+                border-radius: 0;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.08);
+            }
+
+            .main-content {
+                margin-left: 250px;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #my-bookings {
+            margin-top: 1.5rem;
+            padding-left: 2rem;
+            list-style-type: disc;
+            font-size: 1.1rem;
+            color: #4a5568;
+        }
+
+        #my-bookings li {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #edf2f7;
+        }
+
+        #my-bookings li:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .bg-white {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .text-2xl {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 1rem;
+        }
+
+        .text-gray-700 {
+            color: #4a5568;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="dashboard">
+        <header class="nav-header">
+            Flight Dashboard
+        </header>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-item">Home</a>
+            <a href="book-flight.html" class="nav-item">Book Flight</a>
+            <a href="my-bookings.html" class="nav-item active">My Bookings</a>
+            <a href="destinations.html" class="nav-item">Most Visited Destinations</a>
+        </nav>
+        <main class="main-content">
+            <section id="my-bookings" class="fade-in">
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <h2 class="text-2xl font-semibold mb-4 text-gray-800">My Bookings</h2>
+                    <ul id="my-bookings" class="text-gray-700">
+                        <li>No bookings yet.</li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+    </div>
+    <script>
+        const bookingsList = document.getElementById('my-bookings');
+        let bookings = [];
+
+        if (localStorage.getItem('bookings')) {
+            bookings = JSON.parse(localStorage.getItem('bookings'));
+            bookingsList.innerHTML = '';
+            bookings.forEach(booking => {
+                let li = document.createElement('li');
+                li.textContent = `Departure: ${booking.departureLocation}, Arrival: ${booking.arrivalLocation}, Date: ${booking.departureDate}, Passengers: ${booking.passengers}`;
+                bookingsList.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Flight</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #4a5568;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            border: 1px solid #e2e8f0;
+            outline: none;
+            font-size: 1rem;
+            color: #2d3748;
+            transition: border-color 0.2s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l4 4 4-4'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus {
+            border-color: #4299e1;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.16);
+        }
+
+        .btn-primary {
+            padding: 0.75rem 1.5rem;
+            background-color: #4299e1;
+            color: white;
+            border: none;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #3182ce;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            background-color: #2b6cb0;
+            transform: translateY(0);
+        }
+
+        #booking-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f0fdf4;
+            border: 1px solid #68d391;
+            border-radius: 0.375rem;
+            color: #1a5235;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out, pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        #error-message {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #fee2e2;
+            border: 1px solid #ef4444;
+            border-radius: 0.375rem;
+            color: #b91c1c;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        #available-seats {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #edf2f7;
+            border-radius: 0.375rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        #available-seats h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+
+        #seat-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(40px, 1fr));
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #seat-list button {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            border: none;
+            background-color: #68d391;
+            color: white;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        #seat-list button:hover {
+            background-color: #48bb78;
+            transform: translateY(-2px);
+        }
+
+        #seat-list button:disabled {
+            background-color: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .selected-seat {
+            background-color: #4299e1 !important;
+        }
+
+        .booking-summary {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f7fafc;
+            border-radius: 0.375rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .booking-summary h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+
+        .booking-summary p {
+            font-size: 1rem;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        .booking-summary table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .booking-summary table thead th {
+            background-color: #f7fafc;
+            color: #4a5568;
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .booking-summary table tbody td {
+            padding: 0.75rem 1rem;
+            color: #2d3748;
+            font-size: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .booking-summary table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .booking-summary table tbody tr:nth-child(odd) td {
+            background-color: #edf2f7;
+        }
+
+        .booking-summary table thead th:first-child,
+        .booking-summary table tbody td:first-child {
+            padding-left: 1.5rem;
+        }
+
+        .booking-summary table thead th:last-child,
+        .booking-summary table tbody td:last-child {
+            padding-right: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="container">
+        <h1>Book a Flight</h1>
+        <form id="book-flight-form">
+            <div class="form-group">
+                <label for="passenger">Number of Passengers:</label>
+                <input type="number" id="passenger" name="passenger" min="1" required>
+            </div>
+            <div id="passenger-info-fields">
+            </div>
+            <div class="form-group">
+                <label for="departure">Departure City:</label>
+                <select id="departure" name="departure" required>
+                    <option value="" disabled selected>Select departure city</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="arrival">Arrival City:</label>
+                <select id="arrival" name="arrival" required>
+                    <option value="" disabled selected>Select arrival city</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <button type="submit" class="btn-primary">Book Flight</button>
+        </form>
+        <div id="booking-message" style="display: none;"></div>
+        <div id="error-message" style="display: none;"></div>
+        <div id="available-seats" style="display: none;">
+            <h2>Available Seats</h2>
+            <div id="seat-list"></div>
+            <div class="booking-summary" style="display: none;">
+                <h2>Booking Summary</h2>
+                 <table class="booking-summary-table">
+                    <thead>
+                      <tr>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Phone</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Departure</th>
+                        <th scope="col">Arrival</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Passengers</th>
+                        <th scope="col">Seats</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td id="summary-first-name"></td>
+                        <td id="summary-last-name"></td>
+                        <td id="summary-phone"></td>
+                        <td id="summary-email"></td>
+                        <td id="summary-departure"></td>
+                        <td id="summary-arrival"></td>
+                        <td id="summary-date"></td>
+                        <td id="summary-passengers"></td>
+                        <td id="summary-seats"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                <button id="confirm-booking" class="btn-primary">Confirm Booking</button>
+            </div>
+        </div>
+    </div>
+<script>
+const form = document.getElementById('book-flight-form');
+const bookingMessage = document.getElementById('booking-message');
+const errorMessage = document.getElementById('error-message');
+const departureDropdown = document.getElementById('departure');
+const arrivalDropdown = document.getElementById('arrival');
+const availableSeatsSection = document.getElementById('available-seats');
+const seatList = document.getElementById('seat-list');
+const passengerInfoFields = document.getElementById('passenger-info-fields');
+const cities = [
+    "New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego", "Dallas", "San Jose",
+    "London", "Paris", "Tokyo", "Berlin", "Sydney", "Moscow", "Mumbai", "Shanghai", "Toronto", "Rio de Janeiro",
+    "Johannesburg", "Cairo", "Dubai", "Singapore", "Hong Kong", "Bangkok", "Kuala Lumpur", "Jakarta", "Rome", "Madrid",
+    "Amsterdam", "Stockholm", "Copenhagen", "Oslo", "Helsinki", "Vienna", "Zurich", "Geneva", "Dublin", "Edinburgh",
+    "Manchester", "Liverpool", "Glasgow", "Birmingham", "Leeds", "Newcastle", "Sheffield", "Bristol", "Cardiff", "Belfast",
+    "Edinburgh", "Manchester", "Liverpool", "Glasgow", "Birmingham", "Leeds", "Newcastle", "Sheffield", "Bristol", "Cardiff",
+     "Melbourne", "Brisbane", "Perth", "Adelaide", "Auckland", "Wellington", "Christchurch", "Vancouver", "Montreal", "Calgary",
+    "Edmonton", "Ottawa", "Quebec City", "Winnipeg", "Halifax", "St. John's", "Victoria", "Saskatoon", "Regina", "Kelowna"
+];
+function populateCityDropdowns() {
+    cities.forEach(city => {
+        const option1 = document.createElement("option");
+        option1.value = city;
+        option1.textContent = city;
+        departureDropdown.appendChild(option1);
+        const option2 = document.createElement("option");
+        option2.value = city;
+        option2.textContent = city;
+        arrivalDropdown.appendChild(option2);
+    });
+    arrivalDropdown.disabled = false;
+}
+populateCityDropdowns();
+let passengers = [];
+let selectedDeparture = "";
+let selectedArrival = "";
+let selectedDate = "";
+let numberOfPassengers = 0;
+let availableSeats = [];
+let selectedSeats = [];
+const summaryFirstNameElement = document.getElementById("summary-first-name");
+const summaryLastNameElement = document.getElementById("summary-last-name");
+const summaryPhoneElement = document.getElementById("summary-phone");
+const summaryEmailElement = document.getElementById("summary-email");
+const summaryDepartureElement = document.getElementById("summary-departure");
+const summaryArrivalElement = document.getElementById("summary-arrival");
+const summaryDateElement = document.getElementById("summary-date");
+const summaryPassengersElement = document.getElementById("summary-passengers");
+const summarySeatsElement = document.getElementById("summary-seats");
+const confirmBookingButton = document.getElementById("confirm-booking");
+const bookingSummarySection = document.querySelector(".booking-summary");
+form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    numberOfPassengers = parseInt(form.passenger.value);
+    if (isNaN(numberOfPassengers) || numberOfPassengers <= 0) {
+        errorMessage.textContent = "Please enter a valid number of passengers.";
+        errorMessage.style.display = "block";
+        return;
+    }
+    errorMessage.style.display = "none";
+    passengerInfoFields.innerHTML = '';
+    for (let i = 0; i < numberOfPassengers; i++) {
+        const passengerDiv = document.createElement('div');
+        passengerDiv.className = 'passenger-info';
+        passengerDiv.innerHTML = `
+            <h3>Passenger ${i + 1}</h3>
+            <div class="form-group">
+                <label for="first-name-${i}">First Name:</label>
+                <input type="text" id="first-name-${i}" name="firstName[]" required>
+            </div>
+            <div class="form-group">
+                <label for="last-name-${i}">Last Name:</label>
+                <input type="text" id="last-name-${i}" name="lastName[]" required>
+            </div>
+            <div class="form-group">
+                <label for="phone-${i}">Phone Number:</label>
+                <input type="tel" id="phone-${i}" name="phone[]" required>
+            </div>
+            <div class="form-group">
+                <label for="email-${i}">Email:</label>
+                <input type="email" id="email-${i}" name="email[]" required>
+            </div>
+        `;
+        passengerInfoFields.appendChild(passengerDiv);
+    }
+    selectedDeparture = form.departure.value.trim();
+    selectedArrival = form.arrival.value.trim();
+    selectedDate = form.date.value;
+     if (!selectedDeparture  || !selectedArrival || !selectedDate ) {
+        errorMessage.textContent = "Please fill in all the fields correctly.";
+        errorMessage.style.display = "block";
+        return;
+    }
+    if (new Date(selectedDate) < new Date()) {
+        errorMessage.textContent = "Please select a future date.";
+        errorMessage.style.display = "block";
+        return;
+    }
+    errorMessage.style.display = "none";
+    bookingMessage.style.display = "none";
+    availableSeatsSection.style.display = "block";
+    availableSeats = generateSeatNumbers(numberOfPassengers);
+    seatList.innerHTML = '';
+    availableSeats.forEach(seat => {
+        const seatButton = document.createElement('button');
+        seatButton.textContent = seat;
+        seatButton.addEventListener('click', () => toggleSeatSelection(seat, seatButton));
+        seatList.appendChild(seatButton);
+    });
+});
+function generateSeatNumbers(numPassengers) {
+    const totalSeats = 60;
+    const bookedSeats = Math.floor(Math.random() * (totalSeats / 2));
+    const allSeats = Array.from({ length: totalSeats }, (_, i) => i + 1);
+    const minAvailableSeats = bookedSeats + Math.max(numPassengers + 10, 2 * numPassengers);
+    const availableSeats = shuffleArray(allSeats).slice(bookedSeats, minAvailableSeats);
+    return availableSeats;
+}
+function shuffleArray(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex != 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [
+            array[randomIndex], array[currentIndex]];
+    }
+    return array;
+}
+function toggleSeatSelection(seat, seatButton) {
+    if (selectedSeats.includes(seat)) {
+        selectedSeats = selectedSeats.filter(s => s !== seat);
+        seatButton.classList.remove('selected-seat');
+    } else if (selectedSeats.length < numberOfPassengers) {
+        selectedSeats.push(seat);
+        seatButton.classList.add('selected-seat');
+    }
+     if (selectedSeats.length === numberOfPassengers) {
+        displayBookingSummary();
+     }
+    else if(selectedSeats.length > numberOfPassengers){
+         errorMessage.textContent = "You can select only "+numberOfPassengers+" seats";
+         errorMessage.style.display="block";
+    }
+    else{
+        errorMessage.style.display="none";
+    }
+}
+function displayBookingSummary() {
+    if (selectedSeats.length !== numberOfPassengers) {
+        alert(`Please select exactly ${numberOfPassengers} seats.`);
+        return;
+    }
+    passengers = [];
+    const firstNames = document.getElementsByName('firstName[]');
+    const lastNames = document.getElementsByName('lastName[]');
+    const phones = document.getElementsByName('phone[]');
+    const emails = document.getElementsByName('email[]');
+    for (let i = 0; i < numberOfPassengers; i++) {
+        passengers.push({
+            firstName: firstNames[i].value,
+            lastName: lastNames[i].value,
+            phone: phones[i].value,
+            email: emails[i].value
+        });
+    }
+    summaryFirstNameElement.textContent = passengers.map(p => p.firstName).join(', ');
+    summaryLastNameElement.textContent = passengers.map(p => p.lastName).join(', ');
+    summaryPhoneElement.textContent = passengers.map(p => p.phone).join(', ');
+    summaryEmailElement.textContent = passengers.map(p => p.email).join(', ');
+    summaryDepartureElement.textContent = selectedDeparture;
+    summaryArrivalElement.textContent = selectedArrival;
+    summaryDateElement.textContent = selectedDate;
+    summaryPassengersElement.textContent = numberOfPassengers;
+    summarySeatsElement.textContent = selectedSeats.join(', ');
+    bookingSummarySection.style.display = "block";
+}
+confirmBookingButton.addEventListener('click', () => {
+    alert(`Your booking for ${numberOfPassengers} passengers from ${selectedDeparture} to ${selectedArrival} on ${selectedDate} is confirmed.  Your seats are: ${selectedSeats.join(', ')}`);
+     window.location.href = "index.html";
+});
+    </script>
+</body>
+</html>
